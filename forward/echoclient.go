@@ -72,7 +72,7 @@ func handleLoopWrite(conn net.Conn, done chan string) {
 			fmt.Println("Error to send message because of ", e.Error())
 			break
 		}
-		time.Sleep(3000 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 	done <- "Sent"
 }

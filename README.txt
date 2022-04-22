@@ -31,10 +31,27 @@
 		二：curl --proxy socks5h://192.168.199.173:1080 www.google.com
 			执行完后，连接www.google.com socket 消失。
 
-##2022-01-12
+## 2022-01-12
 	#关于tcp 死连接的讨论
 	https://gmd20.github.io/blog/tcp%E7%9A%84%E6%AD%BB%E8%BF%9E%E6%8E%A5%E6%A3%80%E6%B5%8B-dead-peer-%E9%87%8D%E4%BC%A0%E8%AE%A1%E6%97%B6%E5%99%A8-%E5%90%84%E7%A7%8Dtimeout%E8%B6%85%E6%97%B6%E9%80%89%E9%A1%B9-TCP_USER_TIMEOUT-keepalive-heartbeart%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6%E7%AD%89/
 	netstat -natupo 可以查看到timer 信息
 	# 遇到新问题，不停往socket 写数据，keepalive 超时后会立刻启动自动重写机制。
 	# 通过往 echo 0 > /proc/sys/net/ipv4/tcp_retries2 可以重写机制失效。
 	# 注意是IPV4 .l, err = net.Listen("tcp4", *host+":"+*port) 	
+
+## 2022-01-29
+	#尝试nps 解决方案。
+		1：测试网速，使用scp
+			#测试服务器下行，不限制
+			scp -i ../.ssh/id_rsa -P 1196 ./Keil.STM32F7xx_DFP.2.7.0.zip  root@www.rocktan001.com:/root/
+			#测试服务器上行，可以跑满30Mb/s 带宽
+			scp -i ../.ssh/id_rsa -P 1196 root@www.rocktan001.com:/root/Keil.STM32F7xx_DFP.2.7.0.zip ./Keil.STM32F7xx_DFP.2.7.0.zip2
+
+		2: 测试ssh_forward_v2_openssh 内网穿透 速度
+
+			#linux 主机
+			./ssh_forward_v2_openssh
+			#windows 主机
+			scp -P 62003 D://Keil.STM32F7xx_DFP.2.7.0.zip rock@www.rocktan001.com:/home/rock/
+			scp -P 62003  rock@www.rocktan001.com:/home/rock/Keil.STM32F7xx_DFP.2.7.0.zip ./netspeedtest
+			结论：go ssh 转发，可以占满带宽 。腾讯服务器配置：CPU 双核 2.5GHZ. 3.8GB 内存

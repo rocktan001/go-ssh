@@ -1,0 +1,21 @@
+# 连接远程服务器
+		ssh.Client  sshclient	==>		43.155.80.104:62001
+
+# 等待client 断开。设置了tcpkeepalive,45s 没消失会断开。
+		sshclient.Wait()
+
+	## 本地客户端监听
+		server, err := net.Listen("tcp", ":62002")
+		for{
+			client, err := server.Accept()
+			go socks5Proxy(client)
+		}
+
+# socks5 代理工作。
+	## 连接web请求远程地址
+		server, err := sshclient.Dial("tcp", addr)
+	## 代理转发
+	 	dst = server,src = client
+		io.Copy(dst, src)
+		io.Copy(src, dst)
+		
